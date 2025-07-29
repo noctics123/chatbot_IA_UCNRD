@@ -8,8 +8,8 @@ xformers
 opencv-python
 Pillow
 # ↓↓↓ añade UNA de las dos ↓↓↓
-git+https://github.com/h94/IP-Adapter.git@main#egg=ip-adapter
-# ip-adapter==0.1.0
+#git+https://github.com/h94/IP-Adapter.git@main#egg=ip-adapter
+ip-adapter==0.1.0
 controlnet-aux
 streamlit
 omegaconf==2.3.0
