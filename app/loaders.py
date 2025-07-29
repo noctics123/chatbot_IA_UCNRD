@@ -37,21 +37,31 @@ def load_pipe(base_model_id: str):
     return pipe, device
 
 
+# ------------- nuevos nombres de archivos -------------
+DEFAULT_IP_CKPT    = "ip-adapter_sd15.safetensors"          # ckpt base
+DEFAULT_IMAGE_PROJ = "ip-adapter_sd15_image_proj.bin"       # proyector de imagen
+DEFAULT_PLUS_CKPT  = "ip-adapter-plus_sd15.safetensors"     # para IPAdapterPlus
+
 def load_ip_adapter(pipe, repo_id: str = "h94/IP-Adapter", device: str = "cpu"):
     """
-    Descarga y monta los pesos de IP‑Adapter sobre el pipeline.
-    Compatible con ip-adapter==0.1.0 (PyPI) y con el repo oficial.
+    Descarga y monta IP‑Adapter sobre el pipeline.
+    • Soporta ip-adapter==0.1.0 (PyPI)  →   requiere 2 archivos (ckpt + image_proj)
+    • Soporta IPAdapterPlus (repo oficial) →   1 archivo
     """
-    weight_path = hf_hub_download(repo_id, DEFAULT_WEIGHT)
+    # Detectamos si estamos en la clase Plus
+    is_plus = "Plus" in IPAdapterClass.__name__
 
-    # 1º intento: firma más moderna (positional)
+    if is_plus:
+        ckpt_path = hf_hub_download(repo_id, DEFAULT_PLUS_CKPT)
+        return IPAdapterClass(pipe, ckpt_path, device=device)
+
+    # ---- wrapper PyPI 0.1.0: necesita dos rutas ----
+    ip_ckpt_path   = hf_hub_download(repo_id, DEFAULT_IP_CKPT)
+    img_proj_path  = hf_hub_download(repo_id, DEFAULT_IMAGE_PROJ)
+
+    # Firma 1: PyPI espera ip_ckpt=<path>
     try:
-        return IPAdapterClass(pipe, weight_path, device=device)
-
-    # 2º intento: versión PyPI 0.1.0 requiere keyword ip_ckpt=
+        return IPAdapterClass(pipe, ip_ckpt=ip_ckpt_path, image_proj_model_path=img_proj_path, device=device)
     except TypeError:
-        try:
-            return IPAdapterClass(pipe, ip_ckpt=weight_path, device=device)
-        except TypeError:
-            # Algunas variantes usan ckpt= en lugar de ip_ckpt=
-            return IPAdapterClass(pipe, ckpt=weight_path, device=device)
+        # Firma 2: algunos forks usan ckpt=<path>
+        return IPAdapterClass(pipe, ckpt=ip_ckpt_path, image_proj_model_path=img_proj_path, device=device)
