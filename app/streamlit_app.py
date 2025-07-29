@@ -9,7 +9,6 @@ from app.loaders import load_pipe, load_ip_adapter
 from app.generator import generate_with_ipadapter
 from app.utils import pil_to_bytes
 
-
 st.set_page_config(page_title="Anime Image Generator", layout="wide")
 
 @st.cache_resource
