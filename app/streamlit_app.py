@@ -5,9 +5,9 @@ from pathlib import Path
 from omegaconf import OmegaConf
 
 # streamlit_app.py
-from app.loaders import load_pipe, load_ip_adapter
-from app.generator import generate_with_ipadapter
-from app.utils import pil_to_bytes
+from chatbot_IA_UCNRD.app.loaders import load_pipe, load_ip_adapter
+from chatbot_IA_UCNRD.app.generator import generate_with_ipadapter
+from chatbot_IA_UCNRD.app.utils import pil_to_bytes
 
 st.set_page_config(page_title="Anime Image Generator", layout="wide")
 
