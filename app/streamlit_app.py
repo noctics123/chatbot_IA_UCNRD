@@ -1,15 +1,12 @@
-# file: app/streamlit_app.py
+# file: chatbot_IA_UCNRD/app/streamlit_app.py
 import streamlit as st
 from PIL import Image
+from pathlib import Path
 from omegaconf import OmegaConf
 
-from pathlib import Path
-
-
-# streamlit_app.py
 from chatbot_IA_UCNRD.app.loaders import load_pipe, load_ip_adapter
 from chatbot_IA_UCNRD.app.generator import generate_with_ipadapter
-from chatbot_IA_UCNRD.app.utils import resize_for_sd
+from chatbot_IA_UCNRD.app.utils import pil_to_bytes
 
 st.set_page_config(page_title="Anime Image Generator", layout="wide")
 
@@ -17,11 +14,12 @@ st.set_page_config(page_title="Anime Image Generator", layout="wide")
 def boot():
     CFG_PATH = Path(__file__).parent / "configs.yaml"
     cfg = OmegaConf.load(CFG_PATH)
-    pipe = load_pipe(cfg.base_model_id)
-    ip_adapter = load_ip_adapter(pipe, cfg.ip_adapter_repo)
-    return pipe, ip_adapter, cfg
 
-pipe, ip_adapter, cfg = boot()
+    pipe, device = load_pipe(cfg.base_model_id)
+    ip_adapter = load_ip_adapter(pipe, cfg.ip_adapter_repo, device)
+    return pipe, ip_adapter, cfg, device
+
+pipe, ip_adapter, cfg, device = boot()
 
 st.title("🎨 Anime Image Generator con Referencia (IP-Adapter)")
 
@@ -48,11 +46,13 @@ if gen_btn:
     else:
         ref_img = Image.open(ref_file)
         seed = int(seed_in) if seed_in.strip().isdigit() else None
+
         with st.spinner("Generando..."):
             out_img, used_seed = generate_with_ipadapter(
                 pipe, ip_adapter, prompt, neg, ref_img,
                 num_steps=steps, guidance=guidance,
-                strength=strength, seed=seed
+                strength=strength, seed=seed, device=device
             )
+
         st.image(out_img, caption=f"Seed: {used_seed}", use_column_width=True)
-        st.download_button("Descargar PNG", out_img.tobytes(), "output.png")
+        st.download_button("Descargar PNG", pil_to_bytes(out_img), "output.png")

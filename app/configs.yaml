@@ -1,0 +1,10 @@
+# file: chatbot_IA_UCNRD/app/configs.yaml
+base_model_id: "runwayml/stable-diffusion-v1-5"      # cambia por tu modelo anime en HF o local
+ip_adapter_repo: "h94/IP-Adapter"                    # repo/pesos del IP-Adapter
+
+defaults:
+  prompt: "beautiful anime girl, detailed eyes, vibrant colors, masterpiece"
+  negative: "blurry, bad anatomy, extra limbs, low quality, watermark"
+  steps: 25
+  guidance: 7.0
+  strength: 0.8
