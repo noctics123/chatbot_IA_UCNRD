@@ -37,10 +37,21 @@ def load_pipe(base_model_id: str):
     return pipe, device
 
 
-def load_ip_adapter(pipe, repo_id: str = "h94/IP-Adapter", device: str = "cuda"):
+def load_ip_adapter(pipe, repo_id: str = "h94/IP-Adapter", device: str = "cpu"):
     """
-    Descarga y carga los pesos de IP-Adapter sobre el pipeline.
+    Descarga y monta los pesos de IP‑Adapter sobre el pipeline.
+    Compatible con ip-adapter==0.1.0 (PyPI) y con el repo oficial.
     """
     weight_path = hf_hub_download(repo_id, DEFAULT_WEIGHT)
-    ip_adapter = IPAdapterClass(pipe, weight_path, device=device)
-    return ip_adapter
+
+    # 1º intento: firma más moderna (positional)
+    try:
+        return IPAdapterClass(pipe, weight_path, device=device)
+
+    # 2º intento: versión PyPI 0.1.0 requiere keyword ip_ckpt=
+    except TypeError:
+        try:
+            return IPAdapterClass(pipe, ip_ckpt=weight_path, device=device)
+        except TypeError:
+            # Algunas variantes usan ckpt= en lugar de ip_ckpt=
+            return IPAdapterClass(pipe, ckpt=weight_path, device=device)
