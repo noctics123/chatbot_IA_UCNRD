@@ -2,7 +2,9 @@
 import torch
 from PIL import Image
 from contextlib import nullcontext
-from .utils import resize_for_sd
+
+from app.utils import resize_for_sd
+
 
 def generate_with_ipadapter(
     pipe,
