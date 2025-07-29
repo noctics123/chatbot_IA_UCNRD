@@ -3,7 +3,7 @@ import torch
 from PIL import Image
 from contextlib import nullcontext
 
-from app.utils import resize_for_sd
+from chatbot_IA_UCNRD.app.utils import resize_for_sd
 
 
 def generate_with_ipadapter(
