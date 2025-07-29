@@ -38,9 +38,9 @@ def load_pipe(base_model_id: str):
 
 
 # ------------- nuevos nombres de archivos -------------
-DEFAULT_IP_CKPT    = "ip-adapter_sd15.safetensors"          # ckpt base
-DEFAULT_IMAGE_PROJ = "ip-adapter_sd15_image_proj.bin"       # proyector de imagen
-DEFAULT_PLUS_CKPT  = "ip-adapter-plus_sd15.safetensors"     # para IPAdapterPlus
+DEFAULT_IP_CKPT    = "models/ip-adapter_sd15.safetensors"  # ckpt principal
+DEFAULT_IMAGE_PROJ = "models/ip-adapter_sd15.bin"          # image‑proj
+DEFAULT_PLUS_CKPT  = "models/ip-adapter-plus_sd15.safetensors"
 
 def load_ip_adapter(pipe, repo_id: str = "h94/IP-Adapter", device: str = "cpu"):
     """
