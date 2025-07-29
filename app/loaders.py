@@ -56,12 +56,13 @@ def load_ip_adapter(pipe, repo_id: str = "h94/IP-Adapter", device: str = "cpu"):
         return IPAdapterClass(pipe, ckpt_path, device=device)
 
     # ---- wrapper PyPI 0.1.0: necesita dos rutas ----
-    ip_ckpt_path   = hf_hub_download(repo_id, DEFAULT_IP_CKPT)
-    img_proj_path  = hf_hub_download(repo_id, DEFAULT_IMAGE_PROJ)
+    ip_ckpt_path  = hf_hub_download(repo_id, DEFAULT_IP_CKPT)
+    img_proj_path = hf_hub_download(repo_id, DEFAULT_IMAGE_PROJ)
 
-    # Firma 1: PyPI espera ip_ckpt=<path>
     try:
-        return IPAdapterClass(pipe, ip_ckpt=ip_ckpt_path, image_proj_model_path=img_proj_path, device=device)
+        # Firma correcta: 2 posicionales + device
+        return IPAdapterClass(pipe, ip_ckpt_path, img_proj_path, device=device)
+
     except TypeError:
-        # Firma 2: algunos forks usan ckpt=<path>
-        return IPAdapterClass(pipe, ckpt=ip_ckpt_path, image_proj_model_path=img_proj_path, device=device)
+        # Algunos forks usan keyword ip_ckpt=
+        return IPAdapterClass(pipe, ip_ckpt=ip_ckpt_path, image_proj_path=img_proj_path, device=device)
